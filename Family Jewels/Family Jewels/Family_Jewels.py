@@ -4,16 +4,28 @@ import random, math
 from myMath import get_u
 from boss import KingKnight
 from player import Player
-player = None
+from minions import Peon
+
+
+def makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave):
+    # Spawn king knight/enter battle    
+        if timer >= 0.5 and spawnWave == 0:
+            spawnWave = 1
+            #kingKnight = KingKnight()
+            #all_sprites.add(kingKnight)
+            #enemy_sprites.add(kingKnight)
+            spawnCount = 0
+            #spawn waves
+            while 1:
+                peon = Peon()
+                enemy_sprites.add(peon)
+                spawnCount += 1
+                if spawnCount >= spawnRate:
+                    break
+        if wave % 3 == 0:
+            enemy_sprites.add(KingKnight())
 
 def main():
-    
-    
-                    
-    
-    
-
-            
     
     # 1 - Initialize the game
     pygame.init()
@@ -51,16 +63,17 @@ def main():
 
     clock = pygame.time.Clock()
     LEFT = 1
-    king1 = 0
-    kingKnight = None
+    spawnWave = 0
+    #kingKnight = None
+    wave = 1
+    spawnRate = 5
     while running:
-        # Spawn king knight/enter battle    
-        if int(timer) >= 1 and king1 == 0:
-            king1 = 1
-            kingKnight = KingKnight()
-            all_sprites.add(kingKnight)
-            enemy_sprites.add(kingKnight)
+        
 
+        #spawn waves
+        if not enemy_sprites:
+               makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave)
+               wave += 1
         screen.fill(0)
         # Draw background
         for x in range(int(screenx/background.get_width())+1):
@@ -69,12 +82,13 @@ def main():
 
         # 5 - Draw screen and update sprites
         player.update(player, dragon, enemy_sprites, projectile_sprites)
-        projectile_sprites.update(projectile_sprites, timer, enemy_sprites, all_sprites, kingKnight)
-        enemy_sprites.update(screen, timer, player)
+        projectile_sprites.update(projectile_sprites, timer, enemy_sprites, all_sprites)
+        enemy_sprites.update(screen, timer, player, enemy_sprites)
 
         enemy_sprites.draw(screen)
         projectile_sprites.draw(screen)
         player_sprites.draw(screen)   
+
         # Draw timer display
         seconds = clock.tick()/1000.0
         timer += seconds

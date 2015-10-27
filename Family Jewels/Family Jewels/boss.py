@@ -1,11 +1,8 @@
 ﻿import pygame
 from myMath import get_u
+from values import screenx,screeny
 
 king_knight = pygame.image.load("resources/images/king_knight_medium.png")
-
-screenx = 640
-screeny = 480
-
 
 class KingKnight(pygame.sprite.Sprite):
        
@@ -30,8 +27,9 @@ class KingKnight(pygame.sprite.Sprite):
         def getHead(self):
             head = pygame.Rect(self.rect.x+70, self.rect.y+28, 2, 10)
             return head
-        def update(self, screen, timer, player):
+        def update(self, screen, timer, player, enemy_sprites):
         
+            #hp bar
             pygame.draw.rect(screen, (0,0,0), (5, 459, 506, 18))
             pygame.draw.rect(screen, (255,0,0), (8,462,500, 12))
             if self.hitPoints > 0:
@@ -41,7 +39,6 @@ class KingKnight(pygame.sprite.Sprite):
             #make kingknight flash red when hit
             if timer - self.hit_timer > .05:  
                 self.image = king_knight
-
             
             #move kingknight toward player
             dx = player.rect.centerx - self.rect.centerx
