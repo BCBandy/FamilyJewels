@@ -1,7 +1,8 @@
-import math, pygame
+import math, pygame, sys
 from pygame.locals import *
 from myMath import get_u
 from projectiles import Fireball
+from values import *
 
 LEFT = 1
 
@@ -23,7 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.flyAngle = 0.0
         self.hitPoints = 100
 
-    def update(self, player, dragon, enemy_sprites, projectile_sprites):
+    def update(self, player, dragon, enemy_sprites, projectile_sprites, item_sprites, screen, interface):
         # Change player angle
         mousePos = pygame.mouse.get_pos()
         playerRect = player.rect.center
@@ -119,3 +120,12 @@ class Player(pygame.sprite.Sprite):
                     elif self.rect.centery > box.centery:
                         self.rect.centery += 50
                     self.hitBox.center = self.rect.center 
+
+        #check for item collisions
+        for item in item_sprites:
+            if self.hitBox.colliderect(item.rect):
+                if hasattr(item, 'value'):
+                    interface.goldTotal += item.value
+                item.kill()
+
+        

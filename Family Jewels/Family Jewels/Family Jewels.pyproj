@@ -33,6 +33,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Family_Jewels.py" />
+    <Compile Include="Interface.py" />
     <Compile Include="minions.py">
       <SubType>Code</SubType>
     </Compile>

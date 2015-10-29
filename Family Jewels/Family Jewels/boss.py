@@ -1,15 +1,15 @@
 ﻿import pygame
 from myMath import get_u
-from values import screenx,screeny
+#from values import screenx,screeny
 
 king_knight = pygame.image.load("resources/images/king_knight_medium.png")
 
 class KingKnight(pygame.sprite.Sprite):
        
-        def __init__(self):
+        def __init__(self, screen):
             pygame.sprite.Sprite.__init__(self)
             self.image = king_knight
-            self.rect = self.image.get_rect(center = [screenx/1.1, screeny/2])
+            self.rect = self.image.get_rect(center = [screen.get_width()+40, screen.get_height()/2])
             self.hitPoints = 100
             self.hit_timer = 0
             self.head = self.getHead()
@@ -27,7 +27,7 @@ class KingKnight(pygame.sprite.Sprite):
         def getHead(self):
             head = pygame.Rect(self.rect.x+70, self.rect.y+28, 2, 10)
             return head
-        def update(self, screen, timer, player, enemy_sprites):
+        def update(self, screen, timer, player, enemy_sprites, item_sprites, interface):
         
             #hp bar
             pygame.draw.rect(screen, (0,0,0), (5, 459, 506, 18))
