@@ -1,5 +1,6 @@
 ﻿import pygame
 from myMath import get_u
+import minions
 #from values import screenx,screeny
 
 king_knight = pygame.image.load("resources/images/king_knight_medium.png")
@@ -16,16 +17,16 @@ class KingKnight(pygame.sprite.Sprite):
             self.chest = self.getChest()
             self.legs = self.getLegs()
             self.hitBoxes = [self.head, self.chest, self.legs]
-          
+            self.largeFireballId = -1
 
         def getLegs(self):
             legs = pygame.Rect(self.rect.x+60, self.rect.y+110, 25, 40)
             return legs
         def getChest(self):
-            chest = pygame.Rect(self.rect.x+50, self.rect.y+70, 40, 50)
+            chest = pygame.Rect(self.rect.x+50, self.rect.y+70, 40, 110)
             return chest
         def getHead(self):
-            head = pygame.Rect(self.rect.x+70, self.rect.y+28, 2, 10)
+            head = pygame.Rect(self.rect.x+70, self.rect.y+28, 2, 50)
             return head
         def update(self, screen, timer, player, enemy_sprites, item_sprites, interface):
         
@@ -35,6 +36,9 @@ class KingKnight(pygame.sprite.Sprite):
             if self.hitPoints > 0:
                 pygame.draw.rect(screen, (0,255,0), (8,462,self.hitPoints*5, 12))
             else:
+                #boss died
+                if player.largeFireball == False:
+                    item_sprites.add(minions.LargeFireball(self.rect.center))
                 enemy_sprites.remove(self)
             #make kingknight flash red when hit
             if timer - self.hit_timer > .05:  

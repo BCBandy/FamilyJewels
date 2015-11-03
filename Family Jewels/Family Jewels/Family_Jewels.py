@@ -1,4 +1,5 @@
 ﻿import pygame
+from tkinter import *
 from pygame.locals import *
 import random, math
 from myMath import get_u
@@ -29,8 +30,10 @@ def makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave, screen):
                 
                 bossNum += 1
 
-def main():
-    
+def main(root):
+    #close tkinter
+    root.quit()
+
     # 1 - Initialize the game
     pygame.init()
     #timer
@@ -54,7 +57,7 @@ def main():
     playerPos = [250, 250]
     global player
     player = Player(playerPos)
-    interface = Interface()
+    interface = Interface(screen)
     all_sprites.add(player)
     player_sprites.add(player)
     # 2 - Load resources
@@ -97,6 +100,7 @@ def main():
         if not enemy_sprites:
                makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave, screen)
                wave += 1
+               player.rightclick_cd = 0
 
         # 5 - Draw screen and update sprites
         enemy_sprites.draw(screen)
@@ -114,7 +118,8 @@ def main():
         # Draw timer display
         seconds = clock.tick()/1000.0
         timer += seconds
-        player.flyTimer -= seconds
+        player.flycd -= seconds
+        player.rightclick_cd -= seconds
         player.flyDuration -= seconds
         displayTimer = round(timer,1)
 
@@ -143,4 +148,16 @@ def gameover(screen):
                 exit(0)
         pygame.display.flip()
 if __name__ == "__main__":
-    main()
+
+
+    root = Tk()
+    background_image=PhotoImage(file = "resources/images/titlePic.png")
+    background_label = Label(root, image=background_image)
+    background_label.place(x=0, y=0, relwidth=1, relheight=1)
+    root.wm_geometry("1024x680+20+40")
+    root.title('Menu')
+    playButton = Button(root, text='Play')
+    playButton.pack()
+    playButton.bind("<Button-1>", lambda event: main(root))
+    root.mainloop()
+    #main(root)
