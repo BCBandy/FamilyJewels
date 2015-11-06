@@ -31,6 +31,7 @@ class Player(pygame.sprite.Sprite):
         self.hitPoints = 100
         self.largeFireball = False
         self.largeFireballId = 0
+        self.pause = 0
 
     def update(self, player, dragon, enemy_sprites, projectile_sprites, item_sprites, screen, interface):
         # Change player angle
@@ -107,6 +108,11 @@ class Player(pygame.sprite.Sprite):
                     keys[2]=False
                 elif event.key==pygame.K_d:
                     keys[3]=False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                if self.pause == 0:
+                    self.pause = 1
+                else:
+                    self.pause = 0
         # make player fly for duration
         if self.flyDuration <= .2 and self.flyDuration > 0:
             #self.rect.centerx += math.cos(self.flyAngle)*10
