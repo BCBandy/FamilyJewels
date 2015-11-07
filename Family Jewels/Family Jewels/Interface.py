@@ -20,7 +20,11 @@ class Interface():
     def update(self, player, screen):
         #print gold total
         scoreTxt = self.myFont.render('Gold: '+str(self.goldTotal), 1, (0,0,0))
-        screen.blit(scoreTxt, (screen.get_width()-200, screen.get_height()-45))
+        screen.blit(scoreTxt, (screen.get_width()-175, screen.get_height()-45))
+
+        #print score
+        pointsTxt = self.myFont.render('Points: '+str(player.totalPoints), 1, (0,0,0))
+        screen.blit(pointsTxt, (screen.get_width()-200, screen.get_height()-70))
 
         #cooldowns
         if(player.flycd <= 0):

@@ -25,10 +25,11 @@ def makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave, screen):
                 if spawnCount >= spawnRate+bossNum*2:
                     break
             if wave % 3 == 0 :
-                print(wave)
-                enemy_sprites.add(KingKnight(screen))
-                
                 bossNum += 1
+                for x in range(bossNum):
+                    enemy_sprites.add(KingKnight(screen))
+                
+                
 
 def main(root):
     #close tkinter
