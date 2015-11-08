@@ -9,7 +9,10 @@ from minions import Peon
 import values
 from Interface import Interface
 import tkinter.messagebox
-userName = ""
+import pickle
+import os
+import os.path
+
 bossNum = 0
 
 def makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave, screen):
@@ -26,10 +29,11 @@ def makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave, screen):
                 if spawnCount >= spawnRate+bossNum*2:
                     break
             if wave % 3 == 0 :
-                print(wave)
-                enemy_sprites.add(KingKnight(screen))
-                
                 bossNum += 1
+                for x in range(bossNum):
+                    enemy_sprites.add(KingKnight(screen))
+                
+                
 
 def main(self):
     #close tkinter
@@ -88,62 +92,64 @@ def main(self):
                  if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                      player.pause = 0
         while not player.pause:
-                screen.fill(0)
-                # Draw background
-                for x in range(int(screen.get_width()/background.get_width())+1):
-                    for y in range(int(screen.get_height()/background.get_height())+1):
-                        screen.blit(background,(x*100,y*100))
+            screen.fill(0)
+            # Draw background
+            for x in range(int(screen.get_width()/background.get_width())+1):
+                for y in range(int(screen.get_height()/background.get_height())+1):
+                    screen.blit(background,(x*100,y*100))
         
-                #draw gold pile
-                for x in range(1,8):
-                    #if x == 1 or x == 6:
-                    if x % 2 == 0:
-                        screen.blit(chest, (-5, screen.get_height()/8*x-30 ))
-                    else:
-                        screen.blit(gold_pile, (-10, screen.get_height()/8*x-30 ))
+            #draw gold pile
+            for x in range(1,8):
+                #if x == 1 or x == 6:
+                if x % 2 == 0:
+                    screen.blit(chest, (-5, screen.get_height()/8*x-30 ))
+                else:
+                    screen.blit(gold_pile, (-10, screen.get_height()/8*x-30 ))
             
-                 #spawn waves
-                if not enemy_sprites:
-                       makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave, screen)
-                       wave += 1
-                       player.rightclick_cd = 0
+            #spawn waves
+            if not enemy_sprites:
+                   makeWave(timer, enemy_sprites, spawnWave, spawnRate, wave, screen)
+                   wave += 1
+                   player.rightclick_cd = 0
 
-                # 5 - Draw screen and update sprites
-                enemy_sprites.draw(screen)
-                projectile_sprites.draw(screen)
-                player_sprites.draw(screen)  
-                item_sprites.draw(screen)
+            # 5 - Draw screen and update sprites
+            enemy_sprites.draw(screen)
+            projectile_sprites.draw(screen)
+            player_sprites.draw(screen)  
+            item_sprites.draw(screen)
         
         
-                player.update(player, dragon, enemy_sprites, projectile_sprites, item_sprites, screen, interface)
-                projectile_sprites.update(projectile_sprites, timer, enemy_sprites, all_sprites, screen)
-                enemy_sprites.update(screen, timer, player, enemy_sprites, item_sprites, interface)
-                interface.update(player, screen)
+            player.update(player, dragon, enemy_sprites, projectile_sprites, item_sprites, screen, interface)
+            projectile_sprites.update(projectile_sprites, timer, enemy_sprites, all_sprites, screen)
+            enemy_sprites.update(screen, timer, player, enemy_sprites, item_sprites, interface)
+            interface.update(player, screen)
          
 
-                # Draw timer display
-                seconds = clock.tick()/1000.0
-                timer += seconds
-                player.flycd -= seconds
-                player.rightclick_cd -= seconds
-                player.flyDuration -= seconds
-                displayTimer = round(timer,1)
+            # Draw timer display
+            seconds = clock.tick()/1000.0
+            timer += seconds
+            player.flycd -= seconds
+            player.rightclick_cd -= seconds
+            player.flyDuration -= seconds
+            displayTimer = round(timer,1)
 
-                gamefont = pygame.font.Font(None, 24)
-                timertext = gamefont.render(str(displayTimer), 1, [0,0,0])
-                screen.blit(timertext, [screen.get_width()-50, 5])
-                # Draw player health
-                pygame.draw.rect(screen, (0,0,0), (5, 5, 206, 18))
-                pygame.draw.rect(screen, (255,0,0), (8,8,200, 12))
-                if player.hitPoints:
-                    pygame.draw.rect(screen, (0,255,0), (8,8,player.hitPoints*2, 12))
-                else:
-                    running = 0
-                    gameover(screen)
+            gamefont = pygame.font.Font(None, 24)
+            timertext = gamefont.render(str(displayTimer), 1, [0,0,0])
+            screen.blit(timertext, [screen.get_width()-50, 5])
+            # Draw player health
+            pygame.draw.rect(screen, (0,0,0), (5, 5, 206, 18))
+            pygame.draw.rect(screen, (255,0,0), (8,8,200, 12))
+            if player.hitPoints:
+                pygame.draw.rect(screen, (0,255,0), (8,8,player.hitPoints*2, 12))
+            else:
+                save(userName,player)
+                running = 0
+                gameover(screen)
     
-                pygame.display.flip()
-                #limit to 30 frames per second
-                clock.tick(30)
+            pygame.display.flip()
+            #limit to 30 frames per second
+            clock.tick(30)
+
 def gameover(screen):    
     gameover = pygame.image.load("resources/images/gameover.png")
     screen.blit(gameover,(0,0))
@@ -153,7 +159,6 @@ def gameover(screen):
                 pygame.quit()
                 exit(0)
         pygame.display.flip()
-
 def erase(self):
     tEntry.delete(0,END)
 
@@ -167,8 +172,69 @@ def checker(self):
     else:
         main(self)
 
-if __name__ == "__main__":
+def save(userName,player):
+     fh = None
+     tempfilename = "0"
+     try:
+         ListofFiles = [f for f in os.listdir("Saves") if os.path.isfile("saves/" + f) and '.sav' in f]
+         for file in ListofFiles:
+             if userName in file:
+                 namelength = len(userName)
+                 tempname = file[namelength:]
+                 tempname = tempname[:-4]
+                 if tempfilename < tempname:
+                     tempfilename = tempname
+         if tempfilename >= "0":
+             tempfilename = str(int(tempfilename)+1)
+         data = [userName,player.totalPoints]
+         fh = open("Saves/" + userName + tempfilename+".sav", "wb")
+         pickle.dump(data, fh, pickle.HIGHEST_PROTOCOL)
+     except (EnvironmentError, pickle.PicklingError) as err:
+         raise SaveError(str(err))
+     finally:
+         if fh is not None:
+             fh.close()
+def load():
+    ListofFiles = [f for f in os.listdir("Saves") if os.path.isfile("saves/" + f) and '.sav' in f]
+    fh = None
+    ListofUsersandScores = []
 
+    try:
+        for file in ListofFiles: 
+           fh = open("Saves/"+ file, "rb")
+           data = pickle.load(fh)
+           ListofUsersandScores.append((data[0],data[1]))
+    except (EnvironmentError, pickle.UnpicklingError) as err:
+        raise LoadError(str(err))
+    finally:
+        if fh is not None:
+            fh.close()
+    return ListofUsersandScores
+
+def scoreChecker(self):
+    scoreList = load()
+    spacer = "                " ## 16 spaces here
+    rootTwo = Tk()
+    S = Scrollbar(rootTwo)
+    T = Text(rootTwo, height = 13, width = 30)
+    S.pack(side = RIGHT, fill = Y)
+    T.pack(side = LEFT, fill = Y)
+    S.config(command = T.yview)
+    T.config(yscrollcommand = S.set)
+    T.insert(END,"USER" + spacer + "SCORE\n\n")
+
+    for score in scoreList:
+        spaceNumber = len(score[0])
+        if spaceNumber < 4:
+            spaceNumber = ((spaceNumber - 4) * -1) + 16
+        else:
+            spaceNumber = 16 - (spaceNumber - 4)
+        T.insert(END, str(score[0]) + " "*spaceNumber + str(score[1]) + "\n")
+            
+    T.config(state = DISABLED)
+    rootTwo.mainloop()
+
+if __name__ == "__main__":
     root = Tk()
     background_image=PhotoImage(file = "resources/images/titlePic.png")
     background_label = Label(root, image=background_image)
@@ -178,8 +244,11 @@ if __name__ == "__main__":
     playButton = Button(root, text='Play', width = "8", height = "2",background = "goldenrod1")
     playButton.place(x = 500, y = 500)
     playButton.bind("<Button-1>", checker)
+    scoreButton = Button(root,text = "Top Scores",background = "goldenrod1")
+    scoreButton.place(x = 498.5, y = 543)
+    scoreButton.bind("<Button-1>", scoreChecker)
     tEntry = Entry(root)
-    tEntry.place(x = 0, y = 0)
+    tEntry.place(x = 470, y = 580)
     tEntry.insert(0,"Enter Username:")
     tEntry.bind("<Button-1>", erase)
     ##root.bind("<Escape>",close)

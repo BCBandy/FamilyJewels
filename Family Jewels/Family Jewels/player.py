@@ -31,6 +31,7 @@ class Player(pygame.sprite.Sprite):
         self.hitPoints = 100
         self.largeFireball = False
         self.largeFireballId = 0
+        self.totalPoints = 0
         self.pause = 0
 
     def update(self, player, dragon, enemy_sprites, projectile_sprites, item_sprites, screen, interface):
@@ -68,7 +69,7 @@ class Player(pygame.sprite.Sprite):
                     projectile_sprites.add(fireball)
                 #large fireball
                 if event.button == 3 and self.largeFireball == True and self.rightclick_cd <= 0:
-                    self.rightclick_cd = 5
+                    self.rightclick_cd = 3
                     self.shootbig.play()
                     fireball = projectiles.BigFireball(angle, u, player)
                     self.largeFireballId += 1

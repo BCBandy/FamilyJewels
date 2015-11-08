@@ -1,6 +1,7 @@
 ﻿import pygame
 from myMath import get_u
 import minions
+import random
 #from values import screenx,screeny
 
 king_knight = pygame.image.load("resources/images/king_knight_medium.png")
@@ -10,7 +11,7 @@ class KingKnight(pygame.sprite.Sprite):
         def __init__(self, screen):
             pygame.sprite.Sprite.__init__(self)
             self.image = king_knight
-            self.rect = self.image.get_rect(center = [screen.get_width()+40, screen.get_height()/2])
+            self.rect = self.image.get_rect(center = [screen.get_width()+40, random.randint(10, screen.get_height())])
             self.hitPoints = 100
             self.hit_timer = 0
             self.head = self.getHead()
@@ -18,6 +19,8 @@ class KingKnight(pygame.sprite.Sprite):
             self.legs = self.getLegs()
             self.hitBoxes = [self.head, self.chest, self.legs]
             self.largeFireballId = -1
+            self.speed = random.randint(1,4)
+            self.points = 15
 
         def getLegs(self):
             legs = pygame.Rect(self.rect.x+60, self.rect.y+110, 25, 40)
@@ -36,9 +39,10 @@ class KingKnight(pygame.sprite.Sprite):
             if self.hitPoints > 0:
                 pygame.draw.rect(screen, (0,255,0), (8,462,self.hitPoints*5, 12))
             else:
-                #boss died
+                #boss died, drop powerup
                 if player.largeFireball == False:
                     item_sprites.add(minions.LargeFireball(self.rect.center))
+                player.totalPoints += self.points
                 enemy_sprites.remove(self)
             #make kingknight flash red when hit
             if timer - self.hit_timer > .05:  
@@ -50,8 +54,8 @@ class KingKnight(pygame.sprite.Sprite):
 
             toPlayer = get_u(dx, dy)
                         
-            self.rect.centerx += toPlayer[0]*3
-            self.rect.centery += toPlayer[1]*3
+            self.rect.centerx += toPlayer[0]*self.speed
+            self.rect.centery += toPlayer[1]*self.speed
 
             self.head = self.getHead()
             self.chest = self.getChest()

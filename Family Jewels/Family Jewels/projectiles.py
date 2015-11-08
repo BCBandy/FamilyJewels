@@ -58,6 +58,7 @@ class BigFireball(Fireball):
                         #kingKnight.hitPoints -= self.damage
                         enemy.image = self.king_knight_takedamage
                         enemy.hit_timer = timer
+                    
 
         super().delete(projectile_sprites, timer, enemy_sprites, all_sprites, screen)
 

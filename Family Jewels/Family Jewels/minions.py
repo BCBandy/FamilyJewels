@@ -21,6 +21,7 @@ class Peon(pygame.sprite.Sprite):
         self.direction = 'left'
         self.gold = None
         self.largeFireballId = -1
+        self.points = 5
         
     def waitASec(self, timer, item_sprites, interface):
         if self.waitTime == 0:
@@ -60,8 +61,12 @@ class Peon(pygame.sprite.Sprite):
             self.gold.rect.center = self.rect.center
 
         self.hitBox.center = self.rect.center    
-        #kill minion if dead or offscreen
-        if self.hitPoints <= 0 or self.rect.centerx > screen.get_width()+30:
+        #kill minion if dead
+        if self.hitPoints <= 0:
+            player.totalPoints += self.points
+            self.kill()
+        #or offscreen
+        if self.rect.centerx > screen.get_width()+30:
             self.kill()
         
 class Gold(pygame.sprite.Sprite):
