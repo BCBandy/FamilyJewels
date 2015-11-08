@@ -209,12 +209,14 @@ def load():
     finally:
         if fh is not None:
             fh.close()
-    return ListofUsersandScores
+    sorted(ListofUsersandScores,key = lambda x: x[1], reverse = True)
+    return ListofUsersandScores[:10]
 
 def scoreChecker(self):
     scoreList = load()
     spacer = "                " ## 16 spaces here
     rootTwo = Tk()
+    rootTwo.title('Top 10 Scores')
     S = Scrollbar(rootTwo)
     T = Text(rootTwo, height = 13, width = 30)
     S.pack(side = RIGHT, fill = Y)
