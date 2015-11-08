@@ -12,6 +12,7 @@ import tkinter.messagebox
 import pickle
 import os
 import os.path
+import string
 
 bossNum = 0
 
@@ -182,8 +183,9 @@ def save(userName,player):
                  namelength = len(userName)
                  tempname = file[namelength:]
                  tempname = tempname[:-4]
-                 if tempfilename < tempname:
-                     tempfilename = tempname
+                 if tempname.isdigit():
+                     if tempfilename < tempname:
+                         tempfilename = tempname
          if tempfilename >= "0":
              tempfilename = str(int(tempfilename)+1)
          data = [userName,player.totalPoints]
@@ -209,7 +211,7 @@ def load():
     finally:
         if fh is not None:
             fh.close()
-    sorted(ListofUsersandScores,key = lambda x: x[1], reverse = True)
+    ListofUsersandScores.sort(key = lambda x: x[1], reverse = True)
     return ListofUsersandScores[:10]
 
 def scoreChecker(self):
@@ -224,7 +226,7 @@ def scoreChecker(self):
     S.config(command = T.yview)
     T.config(yscrollcommand = S.set)
     T.insert(END,"USER" + spacer + "SCORE\n\n")
-
+    
     for score in scoreList:
         spaceNumber = len(score[0])
         if spaceNumber < 4:
