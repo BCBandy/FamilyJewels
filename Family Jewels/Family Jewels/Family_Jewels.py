@@ -13,6 +13,12 @@ import pickle
 import os
 import os.path
 import string
+from parse_rest.connection import register, ParseBatcher
+from parse_rest.datatypes import Object as ParseObject
+
+APPLICATION_ID = "aGzQrhKhuykuoieMzyeFpBbyJhXYBuqEz9MZzGes"
+REST_API_KEY = "cDO9qCxAJeYrnh7g0NkfYzDzGkG7I9Qw2Cy99wIQ"
+register(APPLICATION_ID, REST_API_KEY)
 
 bossNum = 0
 
@@ -160,6 +166,7 @@ def gameover(screen):
                 pygame.quit()
                 exit(0)
         pygame.display.flip()
+
 def erase(self):
     tEntry.delete(0,END)
 
@@ -173,11 +180,11 @@ def checker(self):
     else:
         main(self)
 
-def save(userName,player):
+"""def save(userName,player):
      fh = None
      tempfilename = "0"
      try:
-         ListofFiles = [f for f in os.listdir("Saves") if os.path.isfile("saves/" + f) and '.sav' in f]
+         ListofFiles = [f for f in os.listdir("Saves") if os.path.isfile("Saves/" + f) and '.sav' in f]
          for file in ListofFiles:
              if userName in file:
                  namelength = len(userName)
@@ -195,8 +202,9 @@ def save(userName,player):
          raise SaveError(str(err))
      finally:
          if fh is not None:
-             fh.close()
-def load():
+             fh.close()"""
+
+"""def load():
     ListofFiles = [f for f in os.listdir("Saves") if os.path.isfile("saves/" + f) and '.sav' in f]
     fh = None
     ListofUsersandScores = []
@@ -211,6 +219,20 @@ def load():
     finally:
         if fh is not None:
             fh.close()
+    ListofUsersandScores.sort(key = lambda x: x[1], reverse = True)
+    return ListofUsersandScores[:10]"""
+
+def save(userName, player):
+    userobject = ParseObject()
+    userobject.Username = userName
+    userobject.Score = player.totalPoints
+    userobject.save()
+
+def load():
+    ListofUserObjects = list(ParseObject.Query.all())
+    ListofUsersandScores = []
+    for userobject in ListofUserObjects:
+        ListofUsersandScores.append((userobject.Username,userobject.Score))
     ListofUsersandScores.sort(key = lambda x: x[1], reverse = True)
     return ListofUsersandScores[:10]
 
